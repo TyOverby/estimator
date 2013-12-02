@@ -13,18 +13,19 @@ function step(e, canvas, width){
     var mean2 = ((e.means[1] - min) / dist) * width;
     var mean3 = ((e.means[2] - min) / dist) * width;
     canvas.fillStyle = 'red';
-    canvas.fillRect(mean1, 0, 1, 100);
+    canvas.fillRect(Math.floor(mean1), 0, 1, 100);
 
     canvas.fillStyle = 'green';
-    canvas.fillRect(mean2, 0, 1, 100);
+    canvas.fillRect(Math.floor(mean2), 0, 1, 100);
 
     canvas.fillStyle = 'blue';
-    canvas.fillRect(mean3, 0, 1, 100);
+    canvas.fillRect(Math.floor(mean3), 0, 1, 100);
 
     e.MStep();
 
     for (var i in _.range(e.values.length)) {
         var position = ((e.values[i] - min) / dist) * width;
+        position = Math.floor(position);
 
         canvas.fillStyle = 'black';
         canvas.fillRect(position-5, 50, 10, 10);
