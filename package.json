@@ -1,0 +1,18 @@
+{
+  "name": "estimator",
+  "version": "0.0.0",
+  "description": "An EM estimator",
+  "main": "estimator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ty Overby",
+  "license": "BSD",
+  "dependencies": {
+    "lodash": "2.4.0",
+    "string-table": "0.1.5"
+  },
+  "devDependencies": {
+      "browserify": "2.36.0"
+  }
+}
