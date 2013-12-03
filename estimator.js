@@ -57,14 +57,12 @@ Estimator.prototype.EStep = function() {
         var denominator = util.sum(this.probs[k]);
 
         for (var i = 0; i < this.values.length; i++) {
-            console.log(this.values[i]);
             numerator += this.values[i] * this.probs[k][i];
             /*if (this.probs[k][i] > 0.5) {
                 count++;
                 sum += this.values[i];
             }*/
         }
-        console.log(numerator, ' / ', denominator);
         this.means[k] = numerator / denominator; //sum / count;
     }
 };
@@ -101,6 +99,8 @@ Estimator.prototype.step = function() {
 };
 
 Estimator.prototype.print = function() {
+    var str = '';
+
     var baseFormatting = {
         typeFormatters: {
             number: function(value, header) {
@@ -129,7 +129,7 @@ Estimator.prototype.print = function() {
         outerBorder: ' ',
         innerBorder: ' '
     };
-    console.log(st.create(this.iterdata, baseFormatting));
+    str += (st.create(this.iterdata, baseFormatting));
 
     var that = this;
     var final_info = _.range(0, this.values.length).map(function(index) {
@@ -142,8 +142,10 @@ Estimator.prototype.print = function() {
         };
     });
 
-    console.log('\n');
-    console.log(st.create(final_info, baseFormatting));
+   str += ('\n\n\n');
+   str += (st.create(final_info, baseFormatting));
+
+   return str;
 };
 
 
@@ -156,7 +158,7 @@ Estimator.prototype.runAll = function() {
     } while (Math.abs(this.loglike() - loglik) > 0.01);
     this.collectIter();
 
-    this.print();
+    console.log(this.print());
 };
 
 exports.Estimator = Estimator;

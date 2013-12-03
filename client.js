@@ -38,13 +38,15 @@ function step(e, canvas, width){
         canvas.fillRect(position + 1-5, 50 + 1, 10 - 2, 10 - 2);
     }
 
+    e.iteration++;
+    e.collectIter();
     e.EStep();
-
 }
 
 window.onload = (function () {
     var canvas = document.querySelector('#canvas');
     var textbox = document.querySelector('#text');
+    var outputbox = document.querySelector('#output');
     var setupBtn = document.querySelector('#setupBtn');
     var stepBtn = document.querySelector('#stepBtn');
     var resetBtn = document.querySelector('#resetBtn');
@@ -65,8 +67,9 @@ window.onload = (function () {
 
         stepBtn.onclick = function() {
             step(estimator, canvas.getContext('2d'), canvas.clientWidth);
+            outputbox.value = estimator.print();
         };
         stepBtn.disabled = false;
+        step(estimator, canvas.getContext('2d'), canvas.clientWidth);
     };
-
 });

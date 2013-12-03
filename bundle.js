@@ -39,13 +39,15 @@ function step(e, canvas, width){
         canvas.fillRect(position + 1-5, 50 + 1, 10 - 2, 10 - 2);
     }
 
+    e.iteration++;
+    e.collectIter();
     e.EStep();
-
 }
 
 window.onload = (function () {
     var canvas = document.querySelector('#canvas');
     var textbox = document.querySelector('#text');
+    var outputbox = document.querySelector('#output');
     var setupBtn = document.querySelector('#setupBtn');
     var stepBtn = document.querySelector('#stepBtn');
     var resetBtn = document.querySelector('#resetBtn');
@@ -66,10 +68,11 @@ window.onload = (function () {
 
         stepBtn.onclick = function() {
             step(estimator, canvas.getContext('2d'), canvas.clientWidth);
+            outputbox.value = estimator.print();
         };
         stepBtn.disabled = false;
+        step(estimator, canvas.getContext('2d'), canvas.clientWidth);
     };
-
 });
 
 },{"./estimator":2,"./util":5,"lodash":3}],2:[function(require,module,exports){
@@ -132,14 +135,12 @@ Estimator.prototype.EStep = function() {
         var denominator = util.sum(this.probs[k]);
 
         for (var i = 0; i < this.values.length; i++) {
-            console.log(this.values[i]);
             numerator += this.values[i] * this.probs[k][i];
             /*if (this.probs[k][i] > 0.5) {
                 count++;
                 sum += this.values[i];
             }*/
         }
-        console.log(numerator, ' / ', denominator);
         this.means[k] = numerator / denominator; //sum / count;
     }
 };
@@ -176,6 +177,8 @@ Estimator.prototype.step = function() {
 };
 
 Estimator.prototype.print = function() {
+    var str = '';
+
     var baseFormatting = {
         typeFormatters: {
             number: function(value, header) {
@@ -204,7 +207,7 @@ Estimator.prototype.print = function() {
         outerBorder: ' ',
         innerBorder: ' '
     };
-    console.log(st.create(this.iterdata, baseFormatting));
+    str += (st.create(this.iterdata, baseFormatting));
 
     var that = this;
     var final_info = _.range(0, this.values.length).map(function(index) {
@@ -217,8 +220,10 @@ Estimator.prototype.print = function() {
         };
     });
 
-    console.log('\n');
-    console.log(st.create(final_info, baseFormatting));
+   str += ('\n\n\n');
+   str += (st.create(final_info, baseFormatting));
+
+   return str;
 };
 
 
@@ -231,7 +236,7 @@ Estimator.prototype.runAll = function() {
     } while (Math.abs(this.loglike() - loglik) > 0.01);
     this.collectIter();
 
-    this.print();
+    console.log(this.print());
 };
 
 exports.Estimator = Estimator;
