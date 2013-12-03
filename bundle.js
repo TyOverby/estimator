@@ -34,7 +34,6 @@ function step(e, canvas, width){
         var red = Math.floor(e.probs[0][i] * 255);
         var green = Math.floor(e.probs[1][i] * 255);
         var blue = Math.floor(e.probs[2][i] * 255);
-        console.log(red, green, blue);
 
         canvas.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
         canvas.fillRect(position + 1-5, 50 + 1, 10 - 2, 10 - 2);
@@ -84,7 +83,6 @@ function Estimator(values) {
     // The baysean probabilities that a value belongs to a distribution.
     // probs[k][i] where k is the distribution index and i is the value index.
     this.probs = util.array2d(3, values.length);
-    this.denom = util.array2d(3, values.length);
     // The weights of a value to a distribution.
     this.weights = util.array2d(3, values.length);
 
@@ -98,8 +96,6 @@ function Estimator(values) {
         lowest, //mean + 10,//(highest + mean) / 2,
         highest //mean - 10//(lowest + mean) / 2
     ];
-
-    this.sumMeans = _(this.means).reduce(function(a, b) {return a + b;});
 
     this.vars = [1, 1, 1];
 
@@ -126,23 +122,25 @@ Estimator.prototype.MStep = function() {
                 ((this.weights[k][i] * (1 / 3)) +
                 (this.weights[k2][i] * (1 / 3)) +
                 (this.weights[k3][i] * (1 / 3)));
-            console.log(this.probs[k][i]);
         }
     }
 };
 
 Estimator.prototype.EStep = function() {
     for (var k = 0; k < 3; k++) {
-        var sum = 0;
-        var count = 0;
+        var numerator = 0;
+        var denominator = util.sum(this.probs[k]);
+
         for (var i = 0; i < this.values.length; i++) {
-            if (this.probs[k][i] > 0.5) {
+            console.log(this.values[i]);
+            numerator += this.values[i] * this.probs[k][i];
+            /*if (this.probs[k][i] > 0.5) {
                 count++;
                 sum += this.values[i];
-            }
+            }*/
         }
-
-        this.means[k] = sum / count;
+        console.log(numerator, ' / ', denominator);
+        this.means[k] = numerator / denominator; //sum / count;
     }
 };
 
@@ -223,9 +221,6 @@ Estimator.prototype.print = function() {
     console.log(st.create(final_info, baseFormatting));
 };
 
-Estimator.prototype.meanSum = function() {
-    return _(this.means).reduce(function(a, b) {return a + b;});
-};
 
 Estimator.prototype.runAll = function() {
     var loglik = this.loglike();
@@ -7318,9 +7313,14 @@ function array2d(x, y, f) {
     });
 }
 
+function sum(array) {
+    return _.reduce(array, function(a, b) {return a + b;}, 0);
+}
+
 exports.sampleMean = sampleMean;
 exports.trimMap = trimMap;
 exports.array2d = array2d;
+exports.sum = sum;
 
 },{"lodash":3}]},{},[1])
 ;

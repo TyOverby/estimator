@@ -33,7 +33,6 @@ function step(e, canvas, width){
         var red = Math.floor(e.probs[0][i] * 255);
         var green = Math.floor(e.probs[1][i] * 255);
         var blue = Math.floor(e.probs[2][i] * 255);
-        console.log(red, green, blue);
 
         canvas.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
         canvas.fillRect(position + 1-5, 50 + 1, 10 - 2, 10 - 2);

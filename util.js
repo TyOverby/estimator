@@ -24,6 +24,11 @@ function array2d(x, y, f) {
     });
 }
 
+function sum(array) {
+    return _.reduce(array, function(a, b) {return a + b;}, 0);
+}
+
 exports.sampleMean = sampleMean;
 exports.trimMap = trimMap;
 exports.array2d = array2d;
+exports.sum = sum;
