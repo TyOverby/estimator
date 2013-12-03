@@ -15,5 +15,15 @@ function trimMap(total) {
     return numbers;
 }
 
+function array2d(x, y, f) {
+    if (f == undefined) {
+        f = function() {return 0;};
+    }
+    return _.map(_.range(0, x), function(i) {
+        return _.map(_.range(0, y), function(k) {return f(i, k);});
+    });
+}
+
 exports.sampleMean = sampleMean;
 exports.trimMap = trimMap;
+exports.array2d = array2d;

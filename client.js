@@ -52,7 +52,10 @@ window.onload = (function () {
 
     canvas.width = document.body.clientWidth - 50;
     resetBtn.onclick = function() {
-        window.location = window.location;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        stepBtn.disabled = true;
     };
     stepBtn.disabled = true;
 

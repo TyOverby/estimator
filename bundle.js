@@ -53,7 +53,10 @@ window.onload = (function () {
 
     canvas.width = document.body.clientWidth - 50;
     resetBtn.onclick = function() {
-        window.location = window.location;
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        stepBtn.disabled = true;
     };
     stepBtn.disabled = true;
 
@@ -78,23 +81,20 @@ var st = require('string-table');
 function Estimator(values) {
     this.values = values;
 
-    this.probs = [
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value()
-     ];
-    this.weights = [
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value()
-    ];
+    // The baysean probabilities that a value belongs to a distribution.
+    // probs[k][i] where k is the distribution index and i is the value index.
+    this.probs = util.array2d(3, values.length);
+    this.denom = util.array2d(3, values.length);
+    // The weights of a value to a distribution.
+    this.weights = util.array2d(3, values.length);
 
     var lowest = _.min(values);
     var highest = _.max(values);
     var mean = util.sampleMean(values);
+    var median = _.sortBy(values, _.identity)[Math.floor(values.length / 2)];
 
     this.means = [
-        mean,
+        median,
         lowest, //mean + 10,//(highest + mean) / 2,
         highest //mean - 10//(lowest + mean) / 2
     ];
@@ -7309,8 +7309,18 @@ function trimMap(total) {
     return numbers;
 }
 
+function array2d(x, y, f) {
+    if (f == undefined) {
+        f = function() {return 0;};
+    }
+    return _.map(_.range(0, x), function(i) {
+        return _.map(_.range(0, y), function(k) {return f(i, k);});
+    });
+}
+
 exports.sampleMean = sampleMean;
 exports.trimMap = trimMap;
+exports.array2d = array2d;
 
 },{"lodash":3}]},{},[1])
 ;

@@ -5,23 +5,20 @@ var st = require('string-table');
 function Estimator(values) {
     this.values = values;
 
-    this.probs = [
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value()
-     ];
-    this.weights = [
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value(),
-        _(values).map(function() {return 0;}).value()
-    ];
+    // The baysean probabilities that a value belongs to a distribution.
+    // probs[k][i] where k is the distribution index and i is the value index.
+    this.probs = util.array2d(3, values.length);
+    this.denom = util.array2d(3, values.length);
+    // The weights of a value to a distribution.
+    this.weights = util.array2d(3, values.length);
 
     var lowest = _.min(values);
     var highest = _.max(values);
     var mean = util.sampleMean(values);
+    var median = _.sortBy(values, _.identity)[Math.floor(values.length / 2)];
 
     this.means = [
-        mean,
+        median,
         lowest, //mean + 10,//(highest + mean) / 2,
         highest //mean - 10//(lowest + mean) / 2
     ];
