@@ -13,6 +13,7 @@
     "string-table": "0.1.5"
   },
   "devDependencies": {
-      "browserify": "2.36.0"
+      "browserify": "2.36.0",
+      "uglify-js": "2.4.6"
   }
 }
