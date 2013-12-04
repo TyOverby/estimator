@@ -28,7 +28,7 @@ function Estimator(values) {
     this.iterdata = [];
 }
 
-Estimator.prototype.MStep = function() {
+Estimator.prototype.EStep = function() {
     // k for each sample
     for (var k = 0; k < 3; k++) {
         // i for each element
@@ -51,7 +51,7 @@ Estimator.prototype.MStep = function() {
     }
 };
 
-Estimator.prototype.EStep = function() {
+Estimator.prototype.MStep = function() {
     for (var k = 0; k < 3; k++) {
         var numerator = 0;
         var denominator = util.sum(this.probs[k]);
@@ -93,8 +93,8 @@ Estimator.prototype.collectIter = function() {
 };
 
 Estimator.prototype.step = function() {
-    this.MStep();
     this.EStep();
+    this.MStep();
     this.iteration++;
 };
 

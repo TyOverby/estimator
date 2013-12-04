@@ -21,7 +21,7 @@ function step(e, canvas, width){
     canvas.fillStyle = 'blue';
     canvas.fillRect(Math.floor(mean3), 0, 1, 100);
 
-    e.MStep();
+    e.EStep();
 
     for (var i in _.range(e.values.length)) {
         var position = ((e.values[i] - min) / dist) * width;
@@ -40,7 +40,17 @@ function step(e, canvas, width){
 
     e.iteration++;
     e.collectIter();
-    e.EStep();
+    e.MStep();
+}
+
+function runAll(e, canvas, width){
+    var loglik = e.loglike();
+    do {
+        loglik = e.loglike();
+        step(e, canvas, width);
+    } while (Math.abs(e.loglike() - loglik) > 0.01);
+    e.iteration++;
+    e.collectIter();
 }
 
 window.onload = (function () {
@@ -49,6 +59,7 @@ window.onload = (function () {
     var outputbox = document.querySelector('#output');
     var setupBtn = document.querySelector('#setupBtn');
     var stepBtn = document.querySelector('#stepBtn');
+    var runBtn = document.querySelector('#runBtn');
     var resetBtn = document.querySelector('#resetBtn');
 
     canvas.width = document.body.clientWidth - 50;
@@ -69,6 +80,12 @@ window.onload = (function () {
             step(estimator, canvas.getContext('2d'), canvas.clientWidth);
             outputbox.value = estimator.print();
         };
+
+        runBtn.onclick = function() {
+            runAll(estimator, canvas.getContext('2d'), canvas.clientWidth);
+            outputbox.value = estimator.print();
+        };
+
         stepBtn.disabled = false;
         step(estimator, canvas.getContext('2d'), canvas.clientWidth);
     };

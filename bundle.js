@@ -22,7 +22,7 @@ function step(e, canvas, width){
     canvas.fillStyle = 'blue';
     canvas.fillRect(Math.floor(mean3), 0, 1, 100);
 
-    e.MStep();
+    e.EStep();
 
     for (var i in _.range(e.values.length)) {
         var position = ((e.values[i] - min) / dist) * width;
@@ -41,7 +41,17 @@ function step(e, canvas, width){
 
     e.iteration++;
     e.collectIter();
-    e.EStep();
+    e.MStep();
+}
+
+function runAll(e, canvas, width){
+    var loglik = e.loglike();
+    do {
+        loglik = e.loglike();
+        step(e, canvas, width);
+    } while (Math.abs(e.loglike() - loglik) > 0.01);
+    e.iteration++;
+    e.collectIter();
 }
 
 window.onload = (function () {
@@ -50,6 +60,7 @@ window.onload = (function () {
     var outputbox = document.querySelector('#output');
     var setupBtn = document.querySelector('#setupBtn');
     var stepBtn = document.querySelector('#stepBtn');
+    var runBtn = document.querySelector('#runBtn');
     var resetBtn = document.querySelector('#resetBtn');
 
     canvas.width = document.body.clientWidth - 50;
@@ -70,6 +81,12 @@ window.onload = (function () {
             step(estimator, canvas.getContext('2d'), canvas.clientWidth);
             outputbox.value = estimator.print();
         };
+
+        runBtn.onclick = function() {
+            runAll(estimator, canvas.getContext('2d'), canvas.clientWidth);
+            outputbox.value = estimator.print();
+        };
+
         stepBtn.disabled = false;
         step(estimator, canvas.getContext('2d'), canvas.clientWidth);
     };
@@ -106,7 +123,7 @@ function Estimator(values) {
     this.iterdata = [];
 }
 
-Estimator.prototype.MStep = function() {
+Estimator.prototype.EStep = function() {
     // k for each sample
     for (var k = 0; k < 3; k++) {
         // i for each element
@@ -129,7 +146,7 @@ Estimator.prototype.MStep = function() {
     }
 };
 
-Estimator.prototype.EStep = function() {
+Estimator.prototype.MStep = function() {
     for (var k = 0; k < 3; k++) {
         var numerator = 0;
         var denominator = util.sum(this.probs[k]);
@@ -171,8 +188,8 @@ Estimator.prototype.collectIter = function() {
 };
 
 Estimator.prototype.step = function() {
-    this.MStep();
     this.EStep();
+    this.MStep();
     this.iteration++;
 };
 
