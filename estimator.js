@@ -29,20 +29,25 @@ function Estimator(values) {
 }
 
 Estimator.prototype.EStep = function() {
-    // k for each sample
+    // k for each mean
     for (var k = 0; k < 3; k++) {
         // i for each element
         for (var i = 0; i < this.values.length; i++) {
+            // From pg. 23
             this.weights[k][i] = (1 / Math.sqrt(this.vars[k] * 2 * Math.PI)) *
                 Math.pow(Math.E, -0.5 *
                 Math.pow(this.values[i] - this.means[k], 2) / this.vars[k]);
         }
     }
 
+    // k for each mean
     for (var k = 0; k < 3; k++) {
+        // i for each element
         for (var i = 0; i < this.values.length; i++) {
+            // The other values of k
             var k2 = (k + 1) % 3;
             var k3 = (k + 2) % 3;
+            // Bayes' theorem
             this.probs[k][i] = (this.weights[k][i] * (1 / 3)) /
                 ((this.weights[k][i] * (1 / 3)) +
                 (this.weights[k2][i] * (1 / 3)) +
@@ -52,16 +57,14 @@ Estimator.prototype.EStep = function() {
 };
 
 Estimator.prototype.MStep = function() {
+    // k for each mean
     for (var k = 0; k < 3; k++) {
         var numerator = 0;
         var denominator = util.sum(this.probs[k]);
 
+        // i for each element
         for (var i = 0; i < this.values.length; i++) {
             numerator += this.values[i] * this.probs[k][i];
-            /*if (this.probs[k][i] > 0.5) {
-                count++;
-                sum += this.values[i];
-            }*/
         }
         this.means[k] = numerator / denominator; //sum / count;
     }
@@ -71,6 +74,7 @@ Estimator.prototype.loglike = function() {
     var TAO = 1 / 3;
     var total = 0;
     for (var i = 0; i < this.values.length; i++) {
+        // From pg 48 from slides.
         var predicate = Math.log(TAO) - (1 / 2) * Math.log(2 * Math.PI);
         var otherSum = 0;
         for (var k = 0; k < 3; k++) {
@@ -82,6 +86,7 @@ Estimator.prototype.loglike = function() {
     return total;
 };
 
+// Gathers info about the iteration.
 Estimator.prototype.collectIter = function() {
     this.iterdata.push({
         iteration: this.iteration,
